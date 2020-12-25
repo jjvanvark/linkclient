@@ -1,0 +1,18 @@
+{
+    "name": "lorama",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "clear && ./node_modules/.bin/parcel index.html",
+        "build": "if [ -d \"dist\" ]; then rm -Rf dist; fi && ./node_modules/.bin/parcel build index.html"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "elm-hot": "^1.1.5",
+        "node-elm-compiler": "^5.0.5",
+        "parcel-bundler": "^1.12.4"
+    }
+}
