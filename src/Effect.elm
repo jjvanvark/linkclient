@@ -3,14 +3,21 @@ module Effect exposing
     , application
     , batch
     , loadUrl
+    , login
+    , logout
     , map
     , none
     , pushUrl
+    , starter
     )
 
+import Api
+import Api.Endpoint as Endpoint
 import Browser
 import Browser.Navigation as Nav
-import Session exposing (Session)
+import Graphql.Http exposing (Error)
+import Session exposing (Session, User)
+import Start exposing (Start)
 import Url exposing (Url)
 
 
@@ -19,6 +26,8 @@ type Effect msg
     | Batch (List (Effect msg))
     | PushUrl Url
     | LoadUrl String
+    | Starter (Result (Error Start) Start -> msg) (Api.Graph Start)
+    | UpdateSession Session
 
 
 type alias Model r =
@@ -65,6 +74,12 @@ perform ignore ( model, effect ) =
         LoadUrl href ->
             ( model, Nav.load href )
 
+        Starter toMsg graph ->
+            ( model, Endpoint.graphqlRequest graph toMsg )
+
+        UpdateSession session ->
+            ( { model | session = session }, Cmd.none )
+
 
 batchEffect : (String -> msg) -> Effect msg -> ( Model r, List (Cmd msg) ) -> ( Model r, List (Cmd msg) )
 batchEffect ignore effect ( model, cmds ) =
@@ -97,6 +112,12 @@ map changeMsg effect =
         LoadUrl href ->
             LoadUrl href
 
+        Starter toMsg graph ->
+            Starter (toMsg >> changeMsg) graph
+
+        UpdateSession session ->
+            UpdateSession session
+
 
 pushUrl : Url -> Effect msg
 pushUrl =
@@ -106,3 +127,19 @@ pushUrl =
 loadUrl : String -> Effect msg
 loadUrl href =
     LoadUrl href
+
+
+starter : (Result (Error Start) Start -> msg) -> Effect msg
+starter toMsg =
+    Starter toMsg Start.start
+
+
+login : User -> Effect msg
+login user =
+    UpdateSession <|
+        Session.inside user
+
+
+logout : Effect msg
+logout =
+    UpdateSession Session.outside
