@@ -5,10 +5,6 @@
 module Graphql.Object exposing (..)
 
 
-type Article
-    = Article
-
-
 type Link
     = Link
 
@@ -23,18 +19,6 @@ type LinkEdge
 
 type PageInfo
     = PageInfo
-
-
-type Project
-    = Project
-
-
-type ProjectConnection
-    = ProjectConnection
-
-
-type ProjectEdge
-    = ProjectEdge
 
 
 type User

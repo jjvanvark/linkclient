@@ -26,39 +26,16 @@ me object_ =
     Object.selectionForCompositeField "me" [] object_ identity
 
 
-type alias ProjectRequiredArguments =
+type alias LinkRequiredArguments =
     { id : Graphql.ScalarCodecs.Id }
 
 
-project :
-    ProjectRequiredArguments
-    -> SelectionSet decodesTo Graphql.Object.Project
-    -> SelectionSet decodesTo RootQuery
-project requiredArgs object_ =
-    Object.selectionForCompositeField "project" [ Argument.required "id" requiredArgs.id (Graphql.ScalarCodecs.codecs |> Graphql.Scalar.unwrapEncoder .codecId) ] object_ identity
-
-
-type alias ProjectsOptionalArguments =
-    { first : OptionalArgument Int
-    , last : OptionalArgument Int
-    , after : OptionalArgument String
-    }
-
-
-projects :
-    (ProjectsOptionalArguments -> ProjectsOptionalArguments)
-    -> SelectionSet decodesTo Graphql.Object.ProjectConnection
-    -> SelectionSet decodesTo RootQuery
-projects fillInOptionals object_ =
-    let
-        filledInOptionals =
-            fillInOptionals { first = Absent, last = Absent, after = Absent }
-
-        optionalArgs =
-            [ Argument.optional "first" filledInOptionals.first Encode.int, Argument.optional "last" filledInOptionals.last Encode.int, Argument.optional "after" filledInOptionals.after Encode.string ]
-                |> List.filterMap identity
-    in
-    Object.selectionForCompositeField "projects" optionalArgs object_ identity
+link :
+    LinkRequiredArguments
+    -> SelectionSet decodesTo Graphql.Object.Link
+    -> SelectionSet (Maybe decodesTo) RootQuery
+link requiredArgs object_ =
+    Object.selectionForCompositeField "link" [ Argument.required "id" requiredArgs.id (Graphql.ScalarCodecs.codecs |> Graphql.Scalar.unwrapEncoder .codecId) ] object_ (identity >> Decode.nullable)
 
 
 type alias LinksOptionalArguments =
@@ -68,16 +45,11 @@ type alias LinksOptionalArguments =
     }
 
 
-type alias LinksRequiredArguments =
-    { projectId : Graphql.ScalarCodecs.Id }
-
-
 links :
     (LinksOptionalArguments -> LinksOptionalArguments)
-    -> LinksRequiredArguments
     -> SelectionSet decodesTo Graphql.Object.LinkConnection
     -> SelectionSet decodesTo RootQuery
-links fillInOptionals requiredArgs object_ =
+links fillInOptionals object_ =
     let
         filledInOptionals =
             fillInOptionals { first = Absent, last = Absent, after = Absent }
@@ -86,4 +58,4 @@ links fillInOptionals requiredArgs object_ =
             [ Argument.optional "first" filledInOptionals.first Encode.int, Argument.optional "last" filledInOptionals.last Encode.int, Argument.optional "after" filledInOptionals.after Encode.string ]
                 |> List.filterMap identity
     in
-    Object.selectionForCompositeField "links" (optionalArgs ++ [ Argument.required "projectId" requiredArgs.projectId (Graphql.ScalarCodecs.codecs |> Graphql.Scalar.unwrapEncoder .codecId) ]) object_ identity
+    Object.selectionForCompositeField "links" optionalArgs object_ identity

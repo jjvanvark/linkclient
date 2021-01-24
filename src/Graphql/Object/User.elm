@@ -32,3 +32,8 @@ name =
 email : SelectionSet String Graphql.Object.User
 email =
     Object.selectionForField "String" "email" [] Decode.string
+
+
+key : SelectionSet String Graphql.Object.User
+key =
+    Object.selectionForField "String" "key" [] Decode.string

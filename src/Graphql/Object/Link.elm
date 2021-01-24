@@ -29,8 +29,46 @@ url =
     Object.selectionForField "String" "url" [] Decode.string
 
 
-article :
-    SelectionSet decodesTo Graphql.Object.Article
-    -> SelectionSet decodesTo Graphql.Object.Link
-article object_ =
-    Object.selectionForCompositeField "article" [] object_ identity
+title : SelectionSet String Graphql.Object.Link
+title =
+    Object.selectionForField "String" "title" [] Decode.string
+
+
+byline : SelectionSet String Graphql.Object.Link
+byline =
+    Object.selectionForField "String" "byline" [] Decode.string
+
+
+content : SelectionSet String Graphql.Object.Link
+content =
+    Object.selectionForField "String" "content" [] Decode.string
+
+
+textcontent : SelectionSet String Graphql.Object.Link
+textcontent =
+    Object.selectionForField "String" "textcontent" [] Decode.string
+
+
+length : SelectionSet Int Graphql.Object.Link
+length =
+    Object.selectionForField "Int" "length" [] Decode.int
+
+
+excerpt : SelectionSet String Graphql.Object.Link
+excerpt =
+    Object.selectionForField "String" "excerpt" [] Decode.string
+
+
+siteName : SelectionSet String Graphql.Object.Link
+siteName =
+    Object.selectionForField "String" "siteName" [] Decode.string
+
+
+image : SelectionSet (Maybe Int) Graphql.Object.Link
+image =
+    Object.selectionForField "(Maybe Int)" "image" [] (Decode.int |> Decode.nullable)
+
+
+favicon : SelectionSet (Maybe Int) Graphql.Object.Link
+favicon =
+    Object.selectionForField "(Maybe Int)" "favicon" [] (Decode.int |> Decode.nullable)
