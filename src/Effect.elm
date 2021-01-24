@@ -1,33 +1,48 @@
 module Effect exposing
     ( Effect
     , application
+    , authenticate
     , batch
+    , contentLink
+    , focus
+    , linker
     , loadUrl
     , login
     , logout
     , map
     , none
     , pushUrl
+    , replaceUrl
     , starter
     )
 
 import Api
 import Api.Endpoint as Endpoint
 import Browser
+import Browser.Dom as Dom
 import Browser.Navigation as Nav
 import Graphql.Http exposing (Error)
+import Graphql.Scalar exposing (Id)
+import Http
+import Route exposing (Route)
 import Session exposing (Session, User)
-import Start exposing (Start)
+import Start exposing (ContentLink, LinkConnection, Start)
+import Task
 import Url exposing (Url)
 
 
 type Effect msg
     = None
     | Batch (List (Effect msg))
+    | ReplaceUrl Route
     | PushUrl Url
     | LoadUrl String
     | Starter (Result (Error Start) Start -> msg) (Api.Graph Start)
+    | Linker (Result (Error LinkConnection) LinkConnection -> msg) (Api.Graph LinkConnection)
     | UpdateSession Session
+    | Focus String
+    | Authenticate (Result Http.Error () -> msg) { email : String, password : String }
+    | ContentLink (Result (Error (Maybe ContentLink)) (Maybe ContentLink) -> msg) (Api.Graph (Maybe ContentLink))
 
 
 type alias Model r =
@@ -68,6 +83,9 @@ perform ignore ( model, effect ) =
             List.foldl (batchEffect ignore) ( model, [] ) effects
                 |> Tuple.mapSecond Cmd.batch
 
+        ReplaceUrl route ->
+            ( model, Route.replaceUrl model.key route )
+
         PushUrl url ->
             ( model, Nav.pushUrl model.key (Url.toString url) )
 
@@ -77,8 +95,20 @@ perform ignore ( model, effect ) =
         Starter toMsg graph ->
             ( model, Endpoint.graphqlRequest graph toMsg )
 
+        Linker toMsg graph ->
+            ( model, Endpoint.graphqlRequest graph toMsg )
+
         UpdateSession session ->
             ( { model | session = session }, Cmd.none )
+
+        Focus id ->
+            ( model, Task.attempt (\_ -> ignore "") (Dom.focus id) )
+
+        Authenticate toMsg cred ->
+            ( model, Api.login cred toMsg )
+
+        ContentLink toMsg graph ->
+            ( model, Endpoint.graphqlRequest graph toMsg )
 
 
 batchEffect : (String -> msg) -> Effect msg -> ( Model r, List (Cmd msg) ) -> ( Model r, List (Cmd msg) )
@@ -106,6 +136,9 @@ map changeMsg effect =
         Batch effects ->
             Batch (List.map (map changeMsg) effects)
 
+        ReplaceUrl route ->
+            ReplaceUrl route
+
         PushUrl url ->
             PushUrl url
 
@@ -115,8 +148,25 @@ map changeMsg effect =
         Starter toMsg graph ->
             Starter (toMsg >> changeMsg) graph
 
+        Linker toMsg graph ->
+            Linker (toMsg >> changeMsg) graph
+
         UpdateSession session ->
             UpdateSession session
+
+        Focus id ->
+            Focus id
+
+        Authenticate toMsg cred ->
+            Authenticate (toMsg >> changeMsg) cred
+
+        ContentLink toMsg graph ->
+            ContentLink (toMsg >> changeMsg) graph
+
+
+replaceUrl : Route -> Effect msg
+replaceUrl route =
+    ReplaceUrl route
 
 
 pushUrl : Url -> Effect msg
@@ -134,6 +184,11 @@ starter toMsg =
     Starter toMsg Start.start
 
 
+linker : (Result (Error LinkConnection) LinkConnection -> msg) -> Effect msg
+linker toMsg =
+    Linker toMsg Start.links
+
+
 login : User -> Effect msg
 login user =
     UpdateSession <|
@@ -143,3 +198,18 @@ login user =
 logout : Effect msg
 logout =
     UpdateSession Session.outside
+
+
+focus : String -> Effect msg
+focus id =
+    Focus id
+
+
+authenticate : (Result Http.Error () -> msg) -> { email : String, password : String } -> Effect msg
+authenticate toMsg creds =
+    Authenticate toMsg creds
+
+
+contentLink : Id -> (Result (Error (Maybe ContentLink)) (Maybe ContentLink) -> msg) -> Effect msg
+contentLink id toMsg =
+    ContentLink toMsg (Start.contentLink id)

@@ -9,6 +9,7 @@ import Login
 import Page exposing (Page)
 import Route exposing (Route(..))
 import Session exposing (Session)
+import Spring
 import Start exposing (Start)
 import StringValidation as V
 import Url exposing (Url)
@@ -56,7 +57,7 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
-update msg model =
+update msg ({ login, page } as model) =
     case msg of
         Ignored _ ->
             ( model, Effect.none )
@@ -70,7 +71,7 @@ update msg model =
                     ( model, Effect.loadUrl href )
 
         ChangedUrl url ->
-            ( model, Effect.none )
+            changeRouteTo (Route.fromUrl url) model
 
         GotPageMsg pageMsg ->
             Page.update pageMsg model.page
@@ -79,12 +80,16 @@ update msg model =
         GotLoginMsg loginMsg ->
             let
                 ( updatedModel, effect ) =
-                    Login.update loginMsg model.login
+                    Login.update loginMsg model.login page
             in
             ( { model | login = updatedModel }, Effect.map GotLoginMsg effect )
 
         ReceivedStart (Err err) ->
-            ( model, Effect.logout )
+            let
+                updatedLogin =
+                    { login | modalY = Spring.setTarget 0 login.modalY }
+            in
+            ( { model | login = updatedLogin, session = Session.outside }, Effect.focus "login-email" )
 
         ReceivedStart (Ok { me }) ->
             ( model, Effect.login me )
@@ -96,16 +101,16 @@ changeRouteTo maybeRoute model =
         |> fromPage model
 
 
-fromPage : Model -> ( Page, Effect msg ) -> ( Model, Effect Msg )
+fromPage : Model -> ( Page, Effect Page.Msg ) -> ( Model, Effect Msg )
 fromPage model ( page, effect ) =
     ( { model | page = page }
-    , Effect.none
+    , Effect.map GotPageMsg effect
     )
 
 
-subscriptions : Model -> Sub msg
-subscriptions _ =
-    Sub.none
+subscriptions : Model -> Sub Msg
+subscriptions { login } =
+    Sub.map GotLoginMsg (Login.subscriptions login)
 
 
 view : Model -> Document Msg
@@ -115,7 +120,7 @@ view model =
             Page.view model.page
                 |> Page.mapDocument GotPageMsg
     in
-    { title = "Link O Rama :: " ++ title, body = body ++ [ Html.map GotLoginMsg (Login.view model.login) ] }
+    { title = "Link O Rama :: " ++ title, body = body ++ [ Html.map GotLoginMsg (Login.view model.session model.login) ] }
 
 
 main : Program () Model Msg

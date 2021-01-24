@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+case $1 in
+    dev)    clear && ./node_modules/.bin/parcel ./index.html ;;
+    build)  if [ -d "./dist" ]; then rm -Rf "./dist"; fi ; ./node_modules/.bin/parcel build ./index.html ;;
+    *)      echo "Invalid task: $1"; exit 1 ;;
+esac

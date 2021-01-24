@@ -1,4 +1,4 @@
-module Page exposing (Msg, Page, blank, changeRouteTo, mapDocument, update, view)
+module Page exposing (Msg, Page, blank, changeRouteTo, mapDocument, toRoute, update, view)
 
 import Browser exposing (Document)
 import Effect exposing (Effect)
@@ -13,6 +13,19 @@ type Page
     = Blank
     | NotFound
     | Home Home.Model
+
+
+toRoute : Page -> Route
+toRoute page =
+    case page of
+        Blank ->
+            Route.Home
+
+        NotFound ->
+            Route.Home
+
+        Home _ ->
+            Route.Home
 
 
 blank : Page

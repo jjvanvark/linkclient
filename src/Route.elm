@@ -1,4 +1,4 @@
-module Route exposing (Route(..), fromUrl, routeToString)
+module Route exposing (Route(..), fromUrl, replaceUrl, routeToString)
 
 import Browser.Navigation as Nav
 import Url exposing (Url)
@@ -20,6 +20,11 @@ parser =
 fromUrl : Url -> Maybe Route
 fromUrl =
     Parser.parse parser
+
+
+replaceUrl : Nav.Key -> Route -> Cmd msg
+replaceUrl key route =
+    Nav.replaceUrl key (routeToString route)
 
 
 routeToString : Route -> String

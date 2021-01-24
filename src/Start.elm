@@ -1,23 +1,23 @@
-module Start exposing (Start, start)
+module Start exposing (ContentLink, Link, LinkConnection, PageInfo, Start, User, contentLink, links, start)
 
 import Api exposing (Graph)
 import Graphql.Http exposing (Error)
 import Graphql.Object
+import Graphql.Object.Link as GqlLink
+import Graphql.Object.LinkConnection as GqlLinkConnection
+import Graphql.Object.LinkEdge as GqlLinkEdge
 import Graphql.Object.PageInfo as GqlPageInfo
-import Graphql.Object.Project as GqlProject
-import Graphql.Object.ProjectConnection as GqlProjectConnection
-import Graphql.Object.ProjectEdge as GqlProjectEdge
 import Graphql.Object.User as GqlUser
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.Query as Query
 import Graphql.Scalar exposing (Id)
-import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
+import Graphql.SelectionSet as SelectionSet exposing (SelectionSet, with)
+import Html.Parser
 import Session exposing (Session)
 
 
 type alias Start =
     { me : User
-    , projects : ProjectConnection
     }
 
 
@@ -28,23 +28,25 @@ type alias User =
     }
 
 
-type alias ProjectConnection =
+type alias LinkConnection =
     { totalCount : Int
-    , edges : List ProjectEdge
+    , edges : List LinkEdge
     , pageInfo : PageInfo
     }
 
 
-type alias ProjectEdge =
+type alias LinkEdge =
     { cursor : String
-    , node : Project
+    , node : Link
     }
 
 
-type alias Project =
+type alias Link =
     { id : Id
-    , name : String
-    , key : String
+    , title : String
+    , url : String
+    , favicon : Maybe Int
+    , image : Maybe Int
     }
 
 
@@ -54,11 +56,22 @@ type alias PageInfo =
     }
 
 
+type alias ContentLink =
+    { id : Id
+    , title : String
+    , url : String
+    , favicon : Maybe Int
+    , image : Maybe Int
+    , content : List Html.Parser.Node
+    , byline : String
+    , siteName : String
+    }
+
+
 start : Graph Start
 start =
-    SelectionSet.map2 Start
+    SelectionSet.map Start
         (Query.me userSelection)
-        (Query.projects (\optionals -> { optionals | first = Present 20 }) projectsSelection)
 
 
 userSelection : SelectionSet User Graphql.Object.User
@@ -69,27 +82,34 @@ userSelection =
         GqlUser.name
 
 
-projectsSelection : SelectionSet ProjectConnection Graphql.Object.ProjectConnection
-projectsSelection =
-    SelectionSet.map3 ProjectConnection
-        GqlProjectConnection.totalCount
-        (GqlProjectConnection.edges projectEdgeSelection)
-        (GqlProjectConnection.pageInfo pageInfoSelection)
+links : Graph LinkConnection
+links =
+    Query.links (\optionals -> { optionals | first = Present 20 }) linkConnectionSelection
 
 
-projectEdgeSelection : SelectionSet ProjectEdge Graphql.Object.ProjectEdge
-projectEdgeSelection =
-    SelectionSet.map2 ProjectEdge
-        GqlProjectEdge.cursor
-        (GqlProjectEdge.node projectSelection)
+linkConnectionSelection : SelectionSet LinkConnection Graphql.Object.LinkConnection
+linkConnectionSelection =
+    SelectionSet.map3 LinkConnection
+        GqlLinkConnection.totalCount
+        (GqlLinkConnection.edges linkEdgeSelection)
+        (GqlLinkConnection.pageInfo pageInfoSelection)
 
 
-projectSelection : SelectionSet Project Graphql.Object.Project
-projectSelection =
-    SelectionSet.map3 Project
-        GqlProject.id
-        GqlProject.name
-        GqlProject.key
+linkEdgeSelection : SelectionSet LinkEdge Graphql.Object.LinkEdge
+linkEdgeSelection =
+    SelectionSet.map2 LinkEdge
+        GqlLinkEdge.cursor
+        (GqlLinkEdge.node linkSelection)
+
+
+linkSelection : SelectionSet Link Graphql.Object.Link
+linkSelection =
+    SelectionSet.map5 Link
+        GqlLink.id
+        GqlLink.title
+        GqlLink.url
+        GqlLink.favicon
+        GqlLink.image
 
 
 pageInfoSelection : SelectionSet PageInfo Graphql.Object.PageInfo
@@ -97,3 +117,33 @@ pageInfoSelection =
     SelectionSet.map2 PageInfo
         GqlPageInfo.hasNextPage
         GqlPageInfo.hasPreviousPage
+
+
+
+-- Link
+
+
+contentLink : Id -> Graph (Maybe ContentLink)
+contentLink id =
+    Query.link (Query.LinkRequiredArguments id) contentLinkSelection
+
+
+contentLinkSelection : SelectionSet ContentLink Graphql.Object.Link
+contentLinkSelection =
+    SelectionSet.map8 ContentLink
+        GqlLink.id
+        GqlLink.title
+        GqlLink.url
+        GqlLink.favicon
+        GqlLink.image
+        (GqlLink.content |> mapContentToHtml)
+        GqlLink.byline
+        GqlLink.siteName
+
+
+mapContentToHtml : SelectionSet String Graphql.Object.Link -> SelectionSet (List Html.Parser.Node) Graphql.Object.Link
+mapContentToHtml =
+    SelectionSet.mapOrFail
+        (\value ->
+            Html.Parser.run value |> Result.mapError (\_ -> "Failed to parse content to html")
+        )
