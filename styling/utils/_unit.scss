@@ -1,0 +1,6 @@
+$unit: 8px !default;
+
+@function u($var) {
+  $amount: if(length($var) > 0, nth($var, 1), 1);
+  @return rem($amount * 8px);
+}

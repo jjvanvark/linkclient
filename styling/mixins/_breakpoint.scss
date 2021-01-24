@@ -1,0 +1,39 @@
+// Breakpoints
+
+$breakpoints: (
+  xs: 0,
+  sm: 600px,
+  md: 900px,
+  lg: 1200px,
+  xl: 1800px
+) !default;
+
+$grid-breakpoints-down: (
+  xs: map-get($breakpoints, sm),
+  sm: map-get($breakpoints, md),
+  md: map-get($breakpoints, lg),
+  lg: map-get($breakpoints, xl)
+);
+
+@mixin breakpoint($var) {
+  $target: nth($var, 1);
+  $type: if(length($var) > 1, nth($var, 2), up);
+
+  @if $type == up and $target == xs or ($type == down and $target == xl) {
+    @content;
+  } @else if $type == up or ($type == only and $target == xl) {
+    @media screen and (min-width: map-get($breakpoints, $target)) {
+      @content;
+    }
+  } @else if $type == down {
+    @media screen and (max-width: map-get($grid-breakpoints-down, $target) - 1) {
+      @content;
+    }
+  } @else if $type == only {
+    @media screen and (min-width: map-get($breakpoints, $target)) and (max-width: map-get($grid-breakpoints-down, $target) - 1) {
+      @content;
+    }
+  } @else {
+    @error 'No target:"#{$target}" with type:"#{$type}" pair found.';
+  }
+}

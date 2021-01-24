@@ -1,0 +1,42 @@
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+
+  &--visible {
+    pointer-events: auto;
+  }
+
+  &__background {
+    position: absolute;
+    background-color: rgba(100, 100, 100, 0.4);
+    opacity: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  &__panel {
+    background-color: #fff;
+    border-radius: u(1);
+    margin-top: u(2);
+    padding: u(2) u(4);
+    top: 100vh;
+    position: relative;
+  }
+
+  @include breakpoint(sm) {
+    &__panel {
+      margin-top: u(4);
+    }
+  }
+  @include breakpoint(sm) {
+    &__panel {
+      margin-top: u(8);
+    }
+  }
+}

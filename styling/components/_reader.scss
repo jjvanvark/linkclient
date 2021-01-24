@@ -1,0 +1,30 @@
+.reader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: purple;
+  opacity: 0;
+  pointer-events: none;
+
+  &__panel {
+    background-color: white;
+    max-width: 768px;
+    margin: 40px auto auto;
+  }
+
+  &__image {
+    background: no-repeat center/cover;
+    padding-top: 9 / 16 * 100%;
+  }
+
+  &__content {
+    padding: rem(24px);
+  }
+
+  &--open {
+    pointer-events: auto;
+    opacity: 1;
+  }
+}

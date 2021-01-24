@@ -1,0 +1,22 @@
+$default-font-size: rem(16px) !default;
+$default-font-weight: 400 !default;
+$default-line-height: 1 !default;
+$default-font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+  Roboto, Ubuntu, "Helvetica Neue", Oxygen, Cantarell, sans-serif !default;
+
+* {
+  border: 0;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: $default-font-size;
+  margin: 0;
+  outline: 0;
+  padding: 0;
+  text-decoration: none;
+}
+
+html {
+  font-weight: $default-font-weight;
+  line-height: $default-line-height;
+  font-family: $default-font-family;
+}

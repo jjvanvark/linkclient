@@ -1,0 +1,118 @@
+$types: (
+  "large-title": (
+    xs: rem(32px) 400 1.5,
+    sm: rem(33px) 400 1.5,
+    md: rem(34px) 400 1.5,
+    lg: rem(36px) 400 1.5,
+    xl: rem(38px) 400 1.5
+  ),
+  "title-1": (
+    xs: rem(26px) 400 1.5,
+    sm: rem(27px) 400 1.5,
+    md: rem(28px) 400 1.5,
+    lg: rem(30px) 400 1.5,
+    xl: rem(32px) 400 1.5
+  ),
+  "title-2": (
+    xs: rem(20px) 400 1.5,
+    sm: rem(21px) 400 1.5,
+    md: rem(22px) 400 1.5,
+    lg: rem(24px) 400 1.5,
+    xl: rem(26px) 400 1.5
+  ),
+  "title-3": (
+    xs: rem(18px) 400 1.5,
+    sm: rem(19px) 400 1.5,
+    md: rem(20px) 400 1.5,
+    lg: rem(22px) 400 1.5,
+    xl: rem(24px) 400 1.5
+  ),
+  "headline": (
+    xs: rem(15px) 600 1.5,
+    sm: rem(16px) 600 1.5,
+    md: rem(17px) 600 1.5,
+    lg: rem(19px) 600 1.5,
+    xl: rem(21px) 60 1.5
+  ),
+  "body": (
+    xs: rem(15px) 400 1.5,
+    sm: rem(16px) 400 1.5,
+    md: rem(17px) 400 1.5,
+    lg: rem(19px) 400 1.5,
+    xl: rem(21px) 400 1.5
+  ),
+  "callout": (
+    xs: rem(14px) 400 1.5,
+    sm: rem(15px) 400 1.5,
+    md: rem(16px) 400 1.5,
+    lg: rem(18px) 400 1.5,
+    xl: rem(20px) 400 1.5
+  ),
+  "subhead": (
+    xs: rem(13px) 400 1.5,
+    sm: rem(14px) 400 1.5,
+    md: rem(15px) 400 1.5,
+    lg: rem(17px) 400 1.5,
+    xl: rem(19px) 400 1.5
+  ),
+  "footnote": (
+    xs: rem(12px) 400 1.5,
+    sm: rem(12px) 400 1.5,
+    md: rem(13px) 400 1.5,
+    lg: rem(15px) 400 1.5,
+    xl: rem(17px) 400 1.5
+  ),
+  "caption-1": (
+    xs: rem(11px) 400 1.5,
+    sm: rem(11px) 400 1.5,
+    md: rem(12px) 400 1.5,
+    lg: rem(14px) 400 1.5,
+    xl: rem(16px) 400 1.5
+  ),
+  "caption-2": (
+    xs: rem(11px) 400 1.5,
+    sm: rem(11px) 400 1.5,
+    md: rem(11px) 400 1.5,
+    lg: rem(13px) 400 1.5,
+    xl: rem(15px) 400 1.5
+  )
+) !default;
+
+$typography-spacing: u(2) !default;
+
+.typography {
+  overflow: hidden;
+  & > * {
+    margin-top: $typography-spacing;
+    margin-bottom: $typography-spacing;
+  }
+
+  &--flatten {
+    & > * {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+
+  &--collapsed {
+    & > *:first-child {
+      margin-top: 0;
+    }
+    & > *:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  @each $target, $amount in $breakpoints {
+    @include breakpoint($target) {
+      @each $style, $value in $types {
+        &__#{$style} {
+          $result: map-get($value, $target);
+          font-size: nth($result, 1);
+          font-weight: if(length($result) > 1, nth($result, 2), 400);
+          line-height: if(length($result) > 2, nth($result, 3), 1);
+        }
+      }
+    }
+  }
+}

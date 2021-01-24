@@ -1,0 +1,127 @@
+/*
+ * Breakpoint mixin vars 
+ */
+
+//$breakpoints: (
+//  xs: 0,
+//  sm: 600px,
+//  md: 900px,
+//  lg: 1200px,
+//  xl: 1800px
+//);
+
+/*
+ * Grid component vars 
+ */
+
+//$grid-columns: 12;
+//$grid-gutter: 16px;
+//$grid-max-width: (
+//  xs: none,
+//  sm: none,
+//  md: none,
+//  lg: none,
+//  xl: 1440px
+//);
+
+/*
+ * Typography component vars 
+ */
+
+//$types: (
+//  "large-title": (
+//    xs: rem(32px) 400 1.5,
+//    sm: rem(33px) 400 1.5,
+//    md: rem(34px) 400 1.5,
+//    lg: rem(36px) 400 1.5,
+//    xl: rem(38px) 400 1.5
+//  ),
+//  "title-1": (
+//    xs: rem(26px) 400 1.5,
+//    sm: rem(27px) 400 1.5,
+//    md: rem(28px) 400 1.5,
+//    lg: rem(30px) 400 1.5,
+//    xl: rem(32px) 400 1.5
+//  ),
+//  "title-2": (
+//    xs: rem(20px) 400 1.5,
+//    sm: rem(21px) 400 1.5,
+//    md: rem(22px) 400 1.5,
+//    lg: rem(24px) 400 1.5,
+//    xl: rem(26px) 400 1.5
+//  ),
+//  "title-3": (
+//    xs: rem(18px) 400 1.5,
+//    sm: rem(19px) 400 1.5,
+//    md: rem(20px) 400 1.5,
+//    lg: rem(22px) 400 1.5,
+//    xl: rem(24px) 400 1.5
+//  ),
+//  "headline": (
+//    xs: rem(15px) 600 1.5,
+//    sm: rem(16px) 600 1.5,
+//    md: rem(17px) 600 1.5,
+//    lg: rem(19px) 600 1.5,
+//    xl: rem(21px) 60 1.5
+//  ),
+//  "body": (
+//    xs: rem(15px) 400 1.5,
+//    sm: rem(16px) 400 1.5,
+//    md: rem(17px) 400 1.5,
+//    lg: rem(19px) 400 1.5,
+//    xl: rem(21px) 400 1.5
+//  ),
+//  "callout": (
+//    xs: rem(14px) 400 1.5,
+//    sm: rem(15px) 400 1.5,
+//    md: rem(16px) 400 1.5,
+//    lg: rem(18px) 400 1.5,
+//    xl: rem(20px) 400 1.5
+//  ),
+//  "subhead": (
+//    xs: rem(13px) 400 1.5,
+//    sm: rem(14px) 400 1.5,
+//    md: rem(15px) 400 1.5,
+//    lg: rem(17px) 400 1.5,
+//    xl: rem(19px) 400 1.5
+//  ),
+//  "footnote": (
+//    xs: rem(12px) 400 1.5,
+//    sm: rem(12px) 400 1.5,
+//    md: rem(13px) 400 1.5,
+//    lg: rem(15px) 400 1.5,
+//    xl: rem(17px) 400 1.5
+//  ),
+//  "caption-1": (
+//    xs: rem(11px) 400 1.5,
+//    sm: rem(11px) 400 1.5,
+//    md: rem(12px) 400 1.5,
+//    lg: rem(14px) 400 1.5,
+//    xl: rem(16px) 400 1.5
+//  ),
+//  "caption-2": (
+//    xs: rem(11px) 400 1.5,
+//    sm: rem(11px) 400 1.5,
+//    md: rem(11px) 400 1.5,
+//    lg: rem(13px) 400 1.5,
+//    xl: rem(15px) 400 1.5
+//  )
+//) !default;
+$typography-spacing: u(1.5);
+
+/*
+ * Base component vars 
+ */
+
+//$default-font-size: rem(16px);
+//$default-font-weight: 400;
+//$default-line-height: 1;
+//$default-font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+//  Roboto, Ubuntu, "Helvetica Neue", Oxygen, Cantarell, sans-serif;
+
+/*
+ * Border radius
+ */
+$border-radius: rem(8px);
+$border-radius-inner: rem(6px);
+$border-radius-outer: rem(12px);

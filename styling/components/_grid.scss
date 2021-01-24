@@ -1,0 +1,95 @@
+// Grid
+
+$grid-columns: 12 !default;
+$grid-gutter: 16px !default;
+$grid-gutter-rem: rem($grid-gutter);
+$grid-gutter-half-rem: rem($grid-gutter / 2);
+
+$grid-max-width: (
+  xs: none,
+  sm: none,
+  md: none,
+  lg: none,
+  xl: 1440px
+) !default;
+
+.grd {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: map-get($grid-max-width, xs);
+
+  &--flex {
+    max-width: none;
+  }
+
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: $grid-gutter-half-rem;
+    padding-right: $grid-gutter-half-rem;
+  }
+
+  &__row--collapse {
+    padding-left: 0;
+    padding-right: 0;
+    .grd__col {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  &__col {
+    flex: 0 0 auto;
+    width: 0;
+    padding-left: $grid-gutter-half-rem;
+    padding-right: $grid-gutter-half-rem;
+  }
+
+  @for $i from 1 through $grid-columns {
+    &__col--#{$i} {
+      width: #{($i / $grid-columns) * 100%};
+    }
+
+    &__col--offset-#{$i} {
+      margin-left: #{($i / $grid-columns) * 100%};
+    }
+  }
+
+  @each $target, $value in $breakpoints {
+    @include breakpoint($target) {
+      @for $i from 1 through $grid-columns {
+        @if $target != xs {
+          max-width: map-get($grid-max-width, $target);
+        }
+        @if $target != xl {
+          &--flex {
+            max-width: none;
+          }
+        }
+
+        &__col--#{$target}-#{$i} {
+          width: #{($i / $grid-columns) * 100%};
+        }
+        &__col--offset-#{$target}-#{$i} {
+          margin-left: #{($i / $grid-columns) * 100%};
+        }
+        &__row--#{$target}-collapse {
+          padding-left: 0;
+          padding-right: 0;
+          .grd__col {
+            padding-left: 0;
+            padding-right: 0;
+          }
+        }
+        &__row--#{$target}-uncollapse {
+          padding-left: $grid-gutter-half-rem;
+          padding-right: $grid-gutter-half-rem;
+          .grd__col {
+            padding-left: $grid-gutter-half-rem;
+            padding-right: $grid-gutter-half-rem;
+          }
+        }
+      }
+    }
+  }
+}

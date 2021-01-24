@@ -1,0 +1,17 @@
+.input-group,
+.button-group {
+  margin-top: u(1);
+  margin-bottom: u(1);
+}
+
+.input-group {
+  &__label {
+    display: block;
+  }
+  &__input {
+    width: 100%;
+    padding: u(1);
+    background-color: #efefef;
+    border-radius: u(0.5);
+  }
+}

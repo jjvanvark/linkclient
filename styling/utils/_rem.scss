@@ -1,0 +1,36 @@
+html {
+  font-size: 62.5%;
+}
+
+@function parse-int($n) {
+  @return $n / ($n * 0 + 1);
+}
+
+@function rem($value) {
+  $px: ();
+  $rem: ();
+
+  @if $value == 0 or $value == auto {
+    $px: append($px, $value);
+    $rem: append($rem, $value);
+  } @else {
+    $unit: unit($value);
+    $val: parse-int($value);
+
+    @if $unit == 'px' {
+      $px: append($px, $value);
+      $rem: append($rem, ($val / 10 + rem));
+    }
+
+    @if $unit == 'rem' {
+      $px: append($px, ($val * 10 + px));
+      $rem: append($rem, $value);
+    }
+  }
+
+  @if $px == $rem {
+    @return $px;
+  } @else {
+    @return $rem;
+  }
+}
