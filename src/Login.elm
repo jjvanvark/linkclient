@@ -51,8 +51,12 @@ type Msg
     | ReceivedStart (Result (Error Start) Start)
 
 
-update : Msg -> Model -> Page -> ( Model, Effect Msg )
-update message model page =
+update : Bool -> Msg -> Model -> Page -> ( Model, Effect Msg )
+update open message preModel page =
+    let
+        model =
+            preModel
+    in
     case message of
         SetEmail email ->
             ( { model | email = email }, Effect.none )

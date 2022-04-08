@@ -57,7 +57,7 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
-update msg ({ login, page } as model) =
+update msg ({ login, page, session } as model) =
     case msg of
         Ignored _ ->
             ( model, Effect.none )
@@ -80,7 +80,7 @@ update msg ({ login, page } as model) =
         GotLoginMsg loginMsg ->
             let
                 ( updatedModel, effect ) =
-                    Login.update loginMsg model.login page
+                    Login.update (Session.isLoggedOut session) loginMsg model.login page
             in
             ( { model | login = updatedModel }, Effect.map GotLoginMsg effect )
 

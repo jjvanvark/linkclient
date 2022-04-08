@@ -21,7 +21,7 @@ type alias Model =
 
 init : ( Model, Effect Msg )
 init =
-    ( Model (Loading Nothing) NotAsked False, Effect.linker ReceivedLinker )
+    ( Model (Loading Nothing) NotAskesd False, Effect.linker ReceivedLinker )
 
 
 type Msg
@@ -35,7 +35,7 @@ update : Msg -> Model -> ( Model, Effect Msg )
 update message model =
     case message of
         ReceivedLinker (Err err) ->
-            ( { model | links = Failure err }, Effect.none )
+            ( { model | links = Failure err }, Effect.logout )
 
         ReceivedLinker (Ok result) ->
             ( { model | links = Success (Link.init result) }, Effect.none )
@@ -47,7 +47,7 @@ update message model =
             ( { model | modal = False }, Effect.none )
 
         ReceivedContentLink (Err err) ->
-            ( model, Effect.none )
+            ( model, Effect.logout )
 
         ReceivedContentLink (Ok maybeLink) ->
             case maybeLink of
